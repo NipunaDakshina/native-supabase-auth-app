@@ -7,7 +7,7 @@ export default function AuthLayout() {
     let isAuth=false;
     useEffect(()=>{
         if(!isAuth){
-            router.replace("/(auth)/login");
+            router.replace("/(auth)/signup");
         }else{
             router.replace("/(tabs)")
         }
