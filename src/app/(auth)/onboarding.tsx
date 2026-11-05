@@ -110,6 +110,7 @@ export default function SignUpScreen() {
       if (profileImage) {
         try {
           profileImageUrl = await uploadProfileImage(user.id, profileImage);
+          Alert.alert("Success","image uploaded success");
         } catch (error) {
           console.error("Error uploading profile image:", error);
           Alert.alert(

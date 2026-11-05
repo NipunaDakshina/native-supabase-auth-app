@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { Alert } from "react-native";
 
 export interface User {
   id: string;
@@ -122,6 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (data.user) {
       const profile = await fetchUserProfile(data.user.id);
+      //Alert.alert("Success","User Created!!!");
       setUser(profile);
     }
   };
