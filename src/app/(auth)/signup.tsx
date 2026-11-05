@@ -1,31 +1,45 @@
-import { router, useRouter } from "expo-router";
-import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState("");
-  const [password,setPassword]=useState("");
-  const router=useRouter();
-  const [isLoading] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp=async()=>{
-    if(!email || !password){
+  const router = useRouter();
+  const { signUp } = useAuth();
+
+  const handleSignUp = async () => {
+    if (!email || !password) {
       Alert.alert("Error", "Please fill in all fields");
     }
-    if(password.length<3){
-      Alert.alert("Error","Password must be at least 3 character");
-    }
-  }
 
+    if (password.length < 3) {
+      Alert.alert("Error", "Password must be at least 3 characters");
+    }
+
+    setIsLoading(true);
+    try {
+      await signUp(email, password);
+      router.push("/(auth)/onboarding");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to sign up. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.container}>
@@ -53,7 +67,7 @@ export default function SignUpScreen() {
             onChangeText={setPassword}
             style={styles.input}
           />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
             {isLoading ? (
               <ActivityIndicator size={24} color="#fff" />
             ) : (
@@ -63,7 +77,7 @@ export default function SignUpScreen() {
 
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => router.push("/(auth)/login")}
+            onPress={() => router.push("/(auth)/signup")}
           >
             <Text style={styles.linkButtonText}>
               Already have an account?{" "}
