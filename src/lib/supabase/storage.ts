@@ -30,6 +30,10 @@ export const uploadProfileImage = async (userId: string, imageUri: string) => {
   }
 };
 
+
+
+
+
 export const uploadPostImage = async (userId: string, imageUri: string) => {
   try {
     const fileExtension = imageUri.split(".").pop() || "jpg";

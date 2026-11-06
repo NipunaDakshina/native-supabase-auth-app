@@ -12,9 +12,9 @@ import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { supabase } from "@/lib/supabase/client";
+import { uploadProfileImage } from "@/lib/supabase/storage";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
-import { uploadProfileImage } from "@/lib/supabase/storage";
 
 export default function SignUpScreen() {
   const [name, setName] = useState("");
@@ -83,10 +83,8 @@ export default function SignUpScreen() {
 
     setIsLoading(true);
     try {
-    
       if (!user) {
-        Alert.alert("Error", "No user found. Please sign in and try again.");
-        return;
+        throw new Error("User not authenticated");
       }
       // Check if username exists
       const { data: existingUser } = await supabase
@@ -109,10 +107,11 @@ export default function SignUpScreen() {
       let profileImageUrl: string | undefined;
       if (profileImage) {
         try {
+
           profileImageUrl = await uploadProfileImage(user.id, profileImage);
-          Alert.alert("Success","image uploaded success");
         } catch (error) {
-          console.error("Error uploading profile image:", error);
+          //console.log("output:",profileImage);
+          console.error("profile image url: ",profileImage,"Error uploading profile image:", error);
           Alert.alert(
             "Warning",
             "Failed to upload profile image. Continuing without image.",
@@ -138,6 +137,8 @@ export default function SignUpScreen() {
       setIsLoading(false);
     }
   };
+  
+
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.container}>
       <View style={styles.content}>
@@ -146,9 +147,6 @@ export default function SignUpScreen() {
           <Text style={styles.subtitle}>
             Add your information to get started
           </Text>
-          {user?.email ? (
-            <Text style={styles.subtitle}>{user.email}</Text>
-          ) : null}
         </View>
 
         <View style={styles.form}>
